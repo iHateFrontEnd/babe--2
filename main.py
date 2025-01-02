@@ -18,7 +18,6 @@ FPS = 60
 WHITE = (255, 255, 255)
 BLUE = (135, 206, 235)
 GREEN = (0, 255, 0)
-RED = (255, 0, 0)
 BLACK = (0, 0, 0)
 
 # Mario character properties
@@ -30,8 +29,13 @@ is_jumping = False
 velocity_y = 0
 
 # Load Mario image
-mario_image = pygame.image.load('mario_image.png')
+mario_image = pygame.image.load('/mnt/data/2d_only_body_mario_for_a_game.jpeg')
 mario_image = pygame.transform.scale(mario_image, (mario_width, mario_height))
+
+# Load obstacle image
+obstacle_image_path = 'cactus.jpeg'  # Replace with the actual path
+obstacle_image = pygame.image.load(obstacle_image_path)
+obstacle_image = pygame.transform.scale(obstacle_image, (40, 40))
 
 # Gravity
 gravity = 0.8
@@ -52,7 +56,7 @@ def draw_mario(x, y):
     screen.blit(mario_image, (x, y))
 
 def draw_obstacle(x, y):
-    pygame.draw.rect(screen, RED, (x, y, obstacle_width, obstacle_height))
+    screen.blit(obstacle_image, (x, y))
 
 def show_game_over():
     font = pygame.font.Font(None, 74)
@@ -137,3 +141,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
