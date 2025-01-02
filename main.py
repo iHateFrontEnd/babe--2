@@ -29,11 +29,11 @@ is_jumping = False
 velocity_y = 0
 
 # Load Mario image
-mario_image = pygame.image.load('mario_image.png')
+mario_image = pygame.image.load('mario.png')
 mario_image = pygame.transform.scale(mario_image, (mario_width, mario_height))
 
 # Load obstacle image
-obstacle_image_path = 'catus.png'  # Replace with the actual path
+obstacle_image_path = 'cactus.jpeg'
 obstacle_image = pygame.image.load(obstacle_image_path)
 obstacle_image = pygame.transform.scale(obstacle_image, (40, 40))
 
@@ -45,17 +45,13 @@ background_image = pygame.transform.scale(background_image, (WIDTH, HEIGHT))
 # Gravity
 gravity = 0.8
 
-# Ground properties
-ground_height = 50
-
 # Obstacle properties
 obstacle_width, obstacle_height = 40, 40
 obstacle_x = WIDTH
-obstacle_y = HEIGHT - ground_height - obstacle_height
+obstacle_y = HEIGHT - 50 - obstacle_height
 obstacle_speed = 5
 
-def draw_ground():
-    pygame.draw.rect(screen, GREEN, (0, HEIGHT - ground_height, WIDTH, ground_height))
+# Remove ground height, merge with background
 
 def draw_mario(x, y):
     screen.blit(mario_image, (x, y))
@@ -74,7 +70,7 @@ def show_game_over():
 def reset_game():
     global mario_x, mario_y, is_jumping, velocity_y, obstacle_x
     mario_x = 100
-    mario_y = HEIGHT - mario_height - ground_height
+    mario_y = HEIGHT - mario_height - 50
     is_jumping = False
     velocity_y = 0
     obstacle_x = WIDTH
@@ -87,7 +83,6 @@ def main():
 
     while running:
         screen.blit(background_image, (0, 0))  # Draw the background image
-        draw_ground()
 
         if game_over:
             show_game_over()
@@ -100,7 +95,7 @@ def main():
                     reset_game()
         else:
             draw_mario(mario_x, mario_y)
-            draw_obstacle(obstacle_x, obstacle_y)
+            draw_obstacle(obstacle_x, HEIGHT - 50 - obstacle_height)
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -121,8 +116,8 @@ def main():
             if is_jumping:
                 mario_y += velocity_y
                 velocity_y += gravity
-                if mario_y >= HEIGHT - mario_height - ground_height:
-                    mario_y = HEIGHT - mario_height - ground_height
+                if mario_y >= HEIGHT - mario_height - 50:
+                    mario_y = HEIGHT - mario_height - 50
                     is_jumping = False
 
             # Prevent Mario from going out of bounds
