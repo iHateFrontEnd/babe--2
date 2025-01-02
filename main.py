@@ -29,13 +29,18 @@ is_jumping = False
 velocity_y = 0
 
 # Load Mario image
-mario_image = pygame.image.load('/mnt/data/2d_only_body_mario_for_a_game.jpeg')
+mario_image = pygame.image.load('mario_image.png')
 mario_image = pygame.transform.scale(mario_image, (mario_width, mario_height))
 
 # Load obstacle image
-obstacle_image_path = 'cactus.jpeg'  # Replace with the actual path
+obstacle_image_path = 'catus.png'  # Replace with the actual path
 obstacle_image = pygame.image.load(obstacle_image_path)
 obstacle_image = pygame.transform.scale(obstacle_image, (40, 40))
+
+# Load background image
+background_image_path = 'background.jpeg'  # Replace with the actual path
+background_image = pygame.image.load(background_image_path)
+background_image = pygame.transform.scale(background_image, (WIDTH, HEIGHT))
 
 # Gravity
 gravity = 0.8
@@ -81,7 +86,7 @@ def main():
     game_over = False
 
     while running:
-        screen.fill(BLUE)  # Clear the screen with a sky-blue background
+        screen.blit(background_image, (0, 0))  # Draw the background image
         draw_ground()
 
         if game_over:
