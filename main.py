@@ -1,6 +1,6 @@
 import pygame
 import sys
-import random
+from PIL import Image
 
 # Initialize Pygame
 pygame.init()
@@ -15,9 +15,6 @@ clock = pygame.time.Clock()
 FPS = 60
 
 # Colors
-WHITE = (255, 255, 255)
-BLUE = (135, 206, 235)
-GREEN = (0, 255, 0)
 BLACK = (0, 0, 0)
 
 # Mario character properties
@@ -33,14 +30,32 @@ mario_image = pygame.image.load('mario_image.png')
 mario_image = pygame.transform.scale(mario_image, (mario_width, mario_height))
 
 # Load obstacle image
-obstacle_image_path = 'cactus.jpeg'
-obstacle_image = pygame.image.load(obstacle_image_path)
-obstacle_image = pygame.transform.scale(obstacle_image, (60,60))
+obstacle_image = pygame.image.load('cactus.jpeg')
+obstacle_image = pygame.transform.scale(obstacle_image, (60, 60))
 
-# Load background image
-background_image_path = 'background2.gif'  # Replace with the actual path
-background_image = pygame.image.load(background_image_path)
-background_image = pygame.transform.scale(background_image, (WIDTH, HEIGHT))
+# Load and prepare the GIF as an animated background
+gif_path = "background2.gif"
+gif = Image.open(gif_path)
+frames = []
+frame_durations = []
+
+# Extract each frame and its duration
+try:
+    while True:
+        frame = gif.copy().convert("RGBA")
+        pygame_frame = pygame.image.fromstring(frame.tobytes(), frame.size, frame.mode)
+        frames.append(pygame.transform.scale(pygame_frame, (WIDTH, HEIGHT)))
+        frame_durations.append(gif.info['duration'] / 1000)  # Convert duration to seconds
+        gif.seek(len(frames))  # Move to the next frame
+except EOFError:
+    pass
+
+# Ensure at least one frame is available
+if not frames:
+    raise ValueError("The GIF has no frames!")
+
+current_frame = 0
+frame_timer = 0
 
 # Gravity
 gravity = 0.8
@@ -50,8 +65,6 @@ obstacle_width, obstacle_height = 30, 115
 obstacle_x = WIDTH
 obstacle_y = HEIGHT - 50 - obstacle_height
 obstacle_speed = 5
-
-# Remove ground height, merge with background
 
 def draw_mario(x, y):
     screen.blit(mario_image, (x, y))
@@ -76,13 +89,22 @@ def reset_game():
     obstacle_x = WIDTH
 
 def main():
-    global mario_x, mario_y, is_jumping, velocity_y, obstacle_x
+    global mario_x, mario_y, is_jumping, velocity_y, obstacle_x, current_frame, frame_timer
 
     running = True
     game_over = False
 
     while running:
-        screen.blit(background_image, (0, 0))  # Draw the background image
+        dt = clock.tick(FPS) / 1000  # Get the time elapsed since the last frame (in seconds)
+
+        # Update the frame timer for the GIF
+        frame_timer += dt
+        if frame_timer >= frame_durations[current_frame]:
+            frame_timer = 0
+            current_frame = (current_frame + 1) % len(frames)
+
+        # Draw the current background frame
+        screen.blit(frames[current_frame], (0, 0))
 
         if game_over:
             show_game_over()
@@ -137,7 +159,7 @@ def main():
 
         # Update display
         pygame.display.flip()
-        clock.tick(FPS)
 
 if __name__ == "__main__":
     main()
+
